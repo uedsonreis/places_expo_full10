@@ -20,9 +20,20 @@ export async function save(place: Place) {
     const places = await getList()
 
     const saved = places.find(p => p.latitude === place.latitude && p.longitude === place.longitude)
-    if (saved) return false
+    if (saved) {
+        saved.name = place.name
+        saved.description = place.description
+    } else {
+        places.push(place)
+    }
     
-    places.push(place)
     await persist(places)
-    return true
+}
+
+export async function remove(place: Place) {
+    let places = await getList()
+
+    places = places.filter(p => p.latitude !== place.latitude && p.longitude !== place.longitude)
+
+    await persist(places)
 }
